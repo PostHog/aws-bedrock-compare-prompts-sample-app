@@ -3,14 +3,11 @@ import {
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
 
-const client = new BedrockRuntimeClient({ region: "us-west-2" });
+const client = new BedrockRuntimeClient({ region: "<YOUR_AWS_REGION>" }); // e.g. us-west-2
 
 export async function POST(request) {
-  const { ingredients, email } = await request.json();
-
-  const { ingredients, email } = await request.json();
-  const prompt = `Generate a recipe using these ingredients: ${ingredients}.`;
-  const modelId = "meta.llama3-1-8b-instruct-v1:0"
+  const { prompt, email } = await request.json();
+  const modelId = "meta.llama3-8b-instruct-v1:0"
   try {
     const input = {
       modelId,
@@ -27,14 +24,13 @@ export async function POST(request) {
     const response = await client.send(command);
     const rawRes = response.body;
     const jsonString = new TextDecoder().decode(rawRes);
-    const parsedJSON = JSON.parse(jsonString);
 
     return new Response(jsonString, {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error:', error);
-    return new Response(JSON.stringify({ error: 'Failed to generate recipe' }), {
+    return new Response(JSON.stringify({ error: 'Failed to generate prompt' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

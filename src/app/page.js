@@ -4,27 +4,29 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const [ingredients, setIngredients] = useState('');
+  const [prompt, setPrompt] = useState('');
   const [email, setEmail] = useState('');
-  const [recipe, setRecipe] = useState('');
+  const [output, setOutput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  
+  const [feedbackGiven, setFeedbackGiven] = useState(false);
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError('');
-    setRecipe('');
+    setOutput('');
+    setFeedbackGiven(false);
     try {
-      const response = await fetch('/api/generate-recipe', {
+      const response = await fetch('/api/generate-llm-output', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ingredients, email }),
+        body: JSON.stringify({ prompt, email }),
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || 'Failed to generate recipe');
       }
-      setRecipe(data.generation);
+      setOutput(data.generation);
     } catch (error) {
       setError(error.message || 'An error occurred while generating the recipe');
     } finally {
@@ -32,9 +34,13 @@ export default function Home() {
     }
   };
 
+  const handleFeedback = (isHelpful) => {
+    setFeedbackGiven(true);
+  };
+
   return (
     <div className="mx-auto p-4 flex items-start flex-col space-y-4">
-      <h1 className="text-2xl mb-4">Recipe Builder</h1>
+      <h1 className="text-2xl mb-4">Prompt Builder</h1>
       <input
         type="email"
         value={email}
@@ -44,9 +50,9 @@ export default function Home() {
       />
       <input
         type="text"
-        value={ingredients}
-        onChange={(e) => setIngredients(e.target.value)}
-        placeholder="Enter your ingredients"
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Enter your prompt"
         className="border p-2 mr-2 text-black"
       />
       <button
@@ -63,9 +69,31 @@ export default function Home() {
           {error}
         </div>
       )}
-      {recipe && (
-        <p className="my-4 whitespace-pre">{recipe}</p>
+      {output && (
+        <>
+          <p className="my-4 whitespace-pre">{output}</p>
+          {!feedbackGiven && (
+            <div className="mt-4">
+              <p className="mb-2">Was this response helpful?</p>
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => handleFeedback(true)}
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => handleFeedback(false)}
+                  className="bg-red-500 text-white px-4 py-2 rounded"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
 }
+
