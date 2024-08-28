@@ -1,5 +1,5 @@
 {
-  "name": "aws-bedrock-sample-app",
+  "name": "aws-bedrock-compare-prompts-sample-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
