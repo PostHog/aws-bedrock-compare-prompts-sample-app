@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { usePostHog } from 'posthog-js/react';
 
 export default function Home() {
   const [promptId, setPromptId] = useState('');
@@ -11,6 +11,7 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [feedbackGiven, setFeedbackGiven] = useState(false);
+  const posthog = usePostHog();
 
   const handleSubmit = async () => {
     setIsSubmitting(true);

@@ -2,11 +2,12 @@ import {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
+import { PostHog } from 'posthog-node'; // import PostHog
 
 const client = new BedrockRuntimeClient({ region: "<YOUR_AWS_REGION>" }); // e.g. us-west-2
 
+
 export async function POST(request) {
-  const { prompt, email } = await request.json();
   const { prompt, email, promptId } = await request.json();
   const modelId = "meta.llama3-8b-instruct-v1:0"
   try {
@@ -36,5 +37,7 @@ export async function POST(request) {
       headers: { 'Content-Type': 'application/json' },
     });
   } finally {
+  // Call posthog.shutdown() to flush and send all pending events before the serverless function shuts down.
+  await posthog.shutdown();
   }
 }
