@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const [promptId, setPromptId] = useState('');
   const [prompt, setPrompt] = useState('');
   const [email, setEmail] = useState('');
   const [output, setOutput] = useState('');
@@ -20,7 +21,7 @@ export default function Home() {
       const response = await fetch('/api/generate-llm-output', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, email }),
+        body: JSON.stringify({ promptId, prompt, email }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -46,6 +47,13 @@ export default function Home() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Enter your email"
+        className="border p-2 mr-2 text-black"
+      />
+      <input
+        type="text"
+        value={promptId}
+        onChange={(e) => setPromptId(e.target.value)}
+        placeholder="Prompt ID"
         className="border p-2 mr-2 text-black"
       />
       <input
