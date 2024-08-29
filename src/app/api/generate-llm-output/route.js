@@ -8,6 +8,13 @@ const client = new BedrockRuntimeClient({ region: "<YOUR_AWS_REGION>" }); // e.g
 
 
 export async function POST(request) {
+  const posthog = new PostHog(
+    '<ph_project_api_key>',
+    {
+      host: '<ph_client_api_host>',
+    },
+  );  
+
   const { prompt, email, promptId } = await request.json();
   const modelId = "meta.llama3-8b-instruct-v1:0"
   try {
