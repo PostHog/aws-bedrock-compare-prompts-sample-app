@@ -33,6 +33,7 @@ export async function POST(request) {
     const response = await client.send(command);
     const rawRes = response.body;
     const jsonString = new TextDecoder().decode(rawRes);
+    const parsedJSON = JSON.parse(jsonString);
 
     return new Response(jsonString, {
       headers: { 'Content-Type': 'application/json' },
